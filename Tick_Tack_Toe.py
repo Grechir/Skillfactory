@@ -80,7 +80,7 @@ def new_game():
     ask = input("Press Enter to start a new game: ")
     while True:
         if ask == "":
-            field = [[" "] * 3 for i in range(3)]
+            field = [[" "] * 3 for _ in range(3)]
             break
         else:
             ask = input("Press Enter to start a new game: ")
