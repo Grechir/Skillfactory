@@ -1,3 +1,4 @@
+import random
 from random import randint
 from art import tprint
 import colorama as clr
@@ -48,9 +49,10 @@ class Board:
         self.hide = hide
         self.count = 0
 
-        self.field = [["0"] * size for _ in range(size)]  # "~" типа волна, мыж на море
+        self.field = [["0"] * size for _ in range(size)]
         self.busy = []
         self.ships = []
+        self.field_dots = []
 
     def __str__(self):
         res = ""
@@ -64,6 +66,10 @@ class Board:
 
     def out_of_field(self, dot):
         return not ((0 <= dot.x < self.size) and (0 <= dot.y < self.size))
+
+    def generate_dots(self):
+        self.field_dots = [Dot(x, y) for x in range(self.size) for y in range(self.size)]
+        return self.field_dots
 
     def contour(self, ship, verb=False):
         near = [
@@ -97,7 +103,10 @@ class Board:
         if dot in self.busy:  # если клетка занята, вызываем соответствующее исключение
             raise BoardUsedException
 
-        self.busy.append(dot)  # в начале хода сразу добавляем точку в занятые, после чего:
+        self.busy.append(dot)  # в начале хода сразу добавляем точку в занятые, после чего
+
+        if not self.field_dots:
+            self.generate_dots()
 
         for ship in self.ships:
             if dot in ship.dots:  # для каждой точки корабля при попадании
@@ -144,12 +153,33 @@ class Player:
 
 
 class AI(Player):
+
     def ask(self):
 
-        dot = Dot(randint(0, 5), randint(0, 5))
-        print(f"Ход компьютера: {dot.x + 1}, {dot.y + 1}")  # +1 здесь для того, чтобы точка совпала с полем.
-        # поле пронумеровано в интерфейсе с 1, а по факту нумерация начинается с 0.
+        self.remove_neighbor_targets()
+        dot = random.choice(self.board.field_dots)
+        self.board.field_dots.remove(dot)
+
+        print(f"Ход компьютера: {dot.x + 1}, {dot.y + 1}")
         return dot
+
+    def remove_neighbor_targets(self):
+        near = [
+            (-1, -1), (-1, 0), (-1, 1),
+            (0, -1), (0, 0), (0, 1),
+            (1, -1), (1, 0), (1, 1)
+        ]
+        for ship in self.enemy.ships:
+            if ship.lives == 0:
+                for dot in ship.dots:
+                    for dx, dy in near:
+                        cur = Dot(dot.x + dx, dot.y + dy)
+                        if cur in self.board.field_dots:
+                            self.board.field_dots.remove(cur)
+
+
+class AIHard(Player):
+    pass
 
 
 class User(Player):
@@ -170,6 +200,7 @@ class Game:
         computer_board.hide = True
 
         self.AI = AI(computer_board, player_board)
+        self.AIHard = AIHard(computer_board, player_board)
         self.User = User(player_board, computer_board)
 
     @staticmethod
@@ -223,7 +254,7 @@ class Game:
         print("-" * 27)
         print("Доска компьютера:")
         print(self.AI.board)
-        print("-" * 27)
+        print("-" * 87)
 
     def loop(self):
         step_count = 0
@@ -262,7 +293,6 @@ class Game:
             else:
                 ask = input("Нажмите Enter для начала игры: ")
         print()
-
 
 # классы исключений ---------------------------------------------------------------------
 
