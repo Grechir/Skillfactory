@@ -1,0 +1,105 @@
+Команды shell:
+------------------------------------------------------------------------------------------------------------------------
+1.	User_1 = User.objects.create_user(username = 'name_1')
+    User_2 = User.objects.create_user(username = 'name_2')
+
+------------------------------------------------------------------------------------------------------------------------
+2.  Author.objects.create(user=User_1)
+    Author.objects.create(user=User_2)
+
+    author_1 = Author.objects.get(id=1)
+    author_2 = Author.objects.get(id=2)
+------------------------------------------------------------------------------------------------------------------------
+3.  Category.objects.create(name="Health")
+    Category.objects.create(name="IT")
+    Category.objects.create(name="Science")
+    Category.objects.create(name="Animals")
+------------------------------------------------------------------------------------------------------------------------
+4.  Post.objects.create(author=author_1, category_type="AR", title="sometitle", text="sometext")
+
+    Post.objects.create(author=author_2, category_type="AR", title="sometitle_2", text="sometext_2")
+
+    Post.objects.create(author=author_2, category_type="NE", title="sometitle_news", text="sometext_news")
+------------------------------------------------------------------------------------------------------------------------
+5.  Post.objects.get(id=1).post_category.add(Category.objects.get(id=1))
+
+    Post.objects.get(id=2).post_category.add(Category.objects.get(id=2))
+
+    Post.objects.get(id=3).post_category.add(Category.objects.get(id=3))
+
+    Post.objects.get(id=3).post_category.add(Category.objects.get(id=4))
+------------------------------------------------------------------------------------------------------------------------
+6.  Comment.objects.create(post=Post.objects.get(id=1), user=User.objects.get(id=2), text="commentext_1")
+
+    Comment.objects.create(post=Post.objects.get(id=2), user=User.objects.get(id=1), text="commentext_2")
+
+    Comment.objects.create(post=Post.objects.get(id=3), user=User.objects.get(id=1), text="commentext_3")
+
+    Comment.objects.create(post=Post.objects.get(id=3), user=User.objects.get(id=1), text="commentext_4")
+------------------------------------------------------------------------------------------------------------------------
+7.  -----   Лайк/дизлайк первый пост:   -----
+
+    for i in range(5):
+        Post.objects.get(id=1).like()
+     for i in range(2):
+        Post.objects.get(id=1).dislike()
+
+    -----   Лайк/дизлайк второй пост:   -----
+
+    for i in range(15):
+    Post.objects.get(id=2).like()
+    for i in range(3):
+    Post.objects.get(id=2).dislike()
+
+    -----   Лайк/дизлайк третий пост:   -----
+
+    for i in range(10):
+    Post.objects.get(id=3).like()
+    for i in range(1):
+    Post.objects.get(id=3).dislike()
+
+    -----------------------------------------
+
+    -----   Лайк/дизлайк 1-ый комментарий:  -----
+    Comment.objects.get(id=1).like()
+    Comment.objects.get(id=1).dislike()
+
+    -----   Лайк/дизлайк 2-ой комментарий:  -----
+    for i in range(4):
+        Comment.objects.get(id=2).like()
+    Comment.objects.get(id=2).dislike()
+
+    -----   Лайк/дизлайк 3-ий комментарий:  -----
+    for i in range(7):
+        Comment.objects.get(id=3).like()
+    for i in range(2):
+        Comment.objects.get(id=3).dislike()
+
+    -----   Лайк/дизлайк 4-ый комментарий:  -----
+            Их нет 😊
+------------------------------------------------------------------------------------------------------------------------
+8.  author_1.update_rating()
+    author_2.update_rating()
+------------------------------------------------------------------------------------------------------------------------
+9.  the_best_author = Author.objects.order_by('-author_rating').first()
+    the_best_author.author_rating
+    the_best_author.user.username
+------------------------------------------------------------------------------------------------------------------------
+10. the_best_post = Post.objects.order_by("-rating").first()
+    the_best_post.created
+    the_best_post.author.user.username
+    the_best_post.rating
+    the_best_post.title
+    the_best_post.preview()
+------------------------------------------------------------------------------------------------------------------------
+11. if the_best_post:
+        comments = Comment.objects.filter(post=the_best_post)
+        for comment in comments:
+            print(f"Дата: {comment.created}")
+            print(f"Пользователь: {comment.user.username}")
+            print(f"Рейтинг: {comment.rating}")
+            print(f"Текст: {comment.text}")
+        else:
+            print("К выбранной публикации нет комментариев")
+------------------------------------------------------------------------------------------------------------------------
+
