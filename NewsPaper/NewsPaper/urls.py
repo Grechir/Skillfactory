@@ -15,8 +15,12 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path
+from django.urls import path, include
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
+   path('admin/', admin.site.urls),
+   path('pages/', include('django.contrib.flatpages.urls')),
+   # Делаем так, чтобы все адреса из нашего приложения (News_app/urls.py)
+   # подключались к главному приложению с префиксом posts/.
+   path('news/', include('News_app.urls')),
 ]
