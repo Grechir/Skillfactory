@@ -26,7 +26,7 @@ class Category(models.Model):
 
 
 class Post(models.Model):
-    author = models.ForeignKey(Author, on_delete=models.CASCADE)
+    author = models.ForeignKey(Author, on_delete=models.CASCADE, related_name='posts')
     title = models.CharField(max_length=128)
     text = models.TextField()
     rating = models.IntegerField(default=0)
@@ -54,6 +54,9 @@ class Post(models.Model):
     def preview(self):
         if isinstance(self.text, str):  # проверка на то, что self.text является строкой
             return self.text[:64] if len(self.text) > 64 else self.text
+
+    def __str__(self):
+        return f'{self.title.title()}: {self.text}'
 
 
 class PostCategory(models.Model):
