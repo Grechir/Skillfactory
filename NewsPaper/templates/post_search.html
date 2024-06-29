@@ -1,18 +1,26 @@
-<!--  наследуемся от шаблона default.html, который мы создавали для flatpages -->
 {% extends 'flatpages/default.html' %}
 
 {% load custom_filters %}
 {% load custom_tags %}
 
-<!-- Название у нас будет news -->
+
 {% block title %}
 News
 {% endblock title %}
 
-<!-- В контенте на странице мы выводим все новости -->
 {% block content %}
 <hr>
-    <h1>Все статьи: {{ news|length }}</h1>
+    <h1>Поиск по новостям</h1>
+    <h2>Все статьи: {{ news|length }}</h2>
+<hr>
+
+       {# Добавляем форму, объединяющую набор полей, которые будут отправляться в запросе #}
+    <form action="" method="get">
+       {# Переменная, которую мы передали через контекст, может сгенерировать нам форму с полями #}
+       {{ filterset.form.as_p }}
+       {# Добавим кнопку отправки данных формы #}
+       <input type="submit" value="Найти" />
+    </form>
 <hr>
     {% if news %}
         {% for new in news %}
@@ -33,7 +41,7 @@ News
 
 {% if page_obj.has_previous %}
        {# Для каждой ссылки пагинации указываем обработку через новый тег #}
-       <a href="?{% url_replace page=1 %}">1</a>
+       <a href="?{% url_replace page=1 %}">1</a>    <!-- мб тут ошибка -->
        {% if page_obj.previous_page_number != 1 %}
            ...
            <a href="?{% url_replace page=page_obj.previous_page_number %}">{{ page_obj.previous_page_number }}</a>
