@@ -33,7 +33,8 @@ News
                 {% endif %}
 
                 <h2>
-                    {{ new.title|censor }}                             <!-- Кастомный фильтр -->
+                    <a href="{% url 'post_detail' new.pk %}"><font color="black">{{ new.title|censor }}</font></a>
+                    <!-- Кастомный фильтр -->
                     {{ new.created|date:"d.m.Y" }}
                 </h2>
                 <h3>{{ new.text|truncatechars:30|censor }}</h3>        <!-- Кастомный фильтр -->

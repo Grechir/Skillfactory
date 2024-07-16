@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Хотите почитать?</title>
+</head>
+<body>
+<h1>Здравствуйте! Вам, как подписчику нашего сайта, отправлены статьи за последнюю неделю. Приятного чтения!</h1>
+    <ul>
+        {% for post in posts %}
+            <li><a href="{{ link }}{{ post.get_absolute_url }}">{{ post.title }}</a> </li>
+        {% endfor %}
+    </ul>
+</body>
+</html>

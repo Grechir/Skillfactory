@@ -16,6 +16,7 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from News_app.views import subscriptions
 
 urlpatterns = [
    path('admin/', admin.site.urls),
@@ -25,4 +26,5 @@ urlpatterns = [
    # Делаем так, чтобы все адреса из нашего приложения (News_app/urls.py)
    # подключались к главному приложению с префиксом posts/.
    path('news/', include('News_app.urls')),
+   path('subscriptions/', subscriptions, name='subscriptions'),
 ]
