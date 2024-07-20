@@ -7,12 +7,12 @@ from django.contrib.auth.decorators import login_required
 from django.db.models import Exists, OuterRef
 from django.shortcuts import render
 from django.views.decorators.csrf import csrf_protect
+from django.urls import reverse_lazy
 
 from .models import Post, Subscription, Category
 from .filters import PostFilter
 from .forms import PostForm
-
-from django.urls import reverse_lazy
+from .tasks import send_new_post_task
 
 
 class PostList(ListView):
@@ -50,6 +50,7 @@ class PostCreate(LoginRequiredMixin, PermissionRequiredMixin, CreateView):
         if self.request.path == '/news/articles/create/':
             post.category_type = "AR"
         post.save()
+        send_new_post_task.delay(post.pk)
         return super().form_valid(form)
 
 
@@ -74,7 +75,7 @@ class PostSearch(ListView):
     context_object_name = 'news'
     paginate_by = 10
 
-    # Переопределяем функцию получения списка товаров
+    # Переопределяем функцию получения списка постов
     def get_queryset(self):
         # Получаем обычный запрос
         queryset = super().get_queryset()
@@ -121,3 +122,4 @@ def subscriptions(request):
         'subscriptions.html',
         {'categories': categories_with_subscriptions},
     )
+
