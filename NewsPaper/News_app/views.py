@@ -14,6 +14,8 @@ from .filters import PostFilter
 from .forms import PostForm
 from .tasks import send_new_post_task
 
+from django.core.cache import cache
+
 
 class PostList(ListView):
     # Указываем модель, объекты которой мы будем выводить
@@ -30,12 +32,21 @@ class PostList(ListView):
 
 
 class PostDetail(DetailView):
-    # Модель всё та же, но мы хотим получать информацию по отдельному товару
-    model = Post
-    # Используем другой шаблон — new.html
+    queryset = Post.objects.all()
     template_name = 'new.html'
-    # Название объекта, в котором будет выбранный пользователем продукт
     context_object_name = 'new'
+
+    def get_object(self, *args, **kwargs):  # переопределяем метод получения объекта
+        # Кэш очень похож на словарь, и метод get действует так же.
+        # Он забирает значение по ключу, если его нет, то забирает None.
+        obj = cache.get(f'post-{self.kwargs["pk"]}',
+                        None)
+
+        # если объекта нет в кэше, то получаем его и записываем в кэш
+        if not obj:
+            obj = super().get_object(queryset=self.queryset)
+            cache.set(f'post-{self.kwargs["pk"]}', obj)
+        return obj
 
 
 class PostCreate(LoginRequiredMixin, PermissionRequiredMixin, CreateView):
